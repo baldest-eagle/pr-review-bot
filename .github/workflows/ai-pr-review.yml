@@ -1,0 +1,69 @@
+name: AI PR Review
+
+on:
+  workflow_dispatch:
+    inputs:
+      repo:
+        description: 'Target repository (owner/name)'
+        required: true
+        default: 'baldest-eagle/tdesktop'
+      pr_number:
+        description: 'Pull request number to review'
+        required: true
+      provider:
+        description: 'Model provider'
+        required: true
+        default: 'gemini'
+        type: choice
+        options:
+          - gemini
+          - nous
+      model:
+        description: 'Model id (leave blank for the provider default)'
+        required: false
+        default: ''
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ai-review-${{ inputs.repo }}-${{ inputs.pr_number }}
+  cancel-in-progress: false
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      # Fetch the target repo so the static symbol check can search real source.
+      - name: Check out target repository
+        env:
+          GH_PAT: ${{ secrets.GH_PAT }}
+        run: |
+          git clone --depth 1 \
+            "https://x-access-token:${GH_PAT}@github.com/${{ inputs.repo }}.git" target
+
+      # Switch to the PR head, so the check sees the code the PR adds.
+      - name: Check out PR head
+        env:
+          GH_PAT: ${{ secrets.GH_PAT }}
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+        run: |
+          cd target
+          gh pr checkout "${{ inputs.pr_number }}" --repo "${{ inputs.repo }}"
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Review pull request
+        env:
+          GH_PAT: ${{ secrets.GH_PAT }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          NOUS_PORTAL_API_KEY: ${{ secrets.NOUS_PORTAL_API_KEY }}
+          TARGET_REPO: ${{ inputs.repo }}
+          PR_NUMBER: ${{ inputs.pr_number }}
+          PROVIDER: ${{ inputs.provider }}
+          MODEL: ${{ inputs.model }}
+          REPO_ROOT: ${{ github.workspace }}/target
+        run: python review.py
