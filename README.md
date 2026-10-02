@@ -16,7 +16,7 @@ Nous free-tier availability as of this writing:
 | Model | Status |
 |---|---|
 | `meituan/longcat-2.5-preview:free` | works — best findings, but slow and reasoning-heavy |
-| `poolside/laguna-s-2.1:free` | works, but times out on large diffs |
+| `poolside/laguna-s-2.1:free` | works intermittently — either times out on large diffs or returns empty content with `finish_reason=length` |
 | `meituan/longcat-2.0:free` | no longer free (404) |
 | `stepfun/step-3.7-flash:free` | 400, provider rejected the request |
 | `inclusionai/ling-3.0-flash-*:free` | 404 / 400 |
