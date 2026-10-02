@@ -44,13 +44,17 @@ jobs:
             "https://x-access-token:${GH_PAT}@github.com/${{ inputs.repo }}.git" target
 
       # Switch to the PR head, so the check sees the code the PR adds.
+      # Fetches refs/pull/N/head directly - works on a shallow clone, where
+      # `gh pr checkout` fails because the PR branch is not fetched.
       - name: Check out PR head
         env:
           GH_PAT: ${{ secrets.GH_PAT }}
-          GH_TOKEN: ${{ secrets.GH_PAT }}
         run: |
           cd target
-          gh pr checkout "${{ inputs.pr_number }}" --repo "${{ inputs.repo }}"
+          git fetch --depth 1 origin \
+            "refs/pull/${{ inputs.pr_number }}/head:pr-review-head"
+          git checkout -q pr-review-head
+          git log --oneline -1
 
       - uses: actions/setup-python@v5
         with:
