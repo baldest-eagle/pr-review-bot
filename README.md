@@ -9,14 +9,14 @@ Two providers are wired up:
 | Provider | Default model | Notes |
 |---|---|---|
 | `gemini` | `gemini-3.8-flash` | Falls back through `gemini-3.6-flash` → `gemini-flash-latest` → `gemini-2.5-flash` on 429/503/timeout |
-| `nous` | `poolside/laguna-s-2.1:free` | Falls back to `meituan/longcat-2.5-preview:free`. Slow — allow a few minutes. |
+| `nous` | `meituan/longcat-2.5-preview:free` | Falls back to `poolside/laguna-s-2.1:free`. Reasoning model — slow, allow 2–5 minutes. |
 
 Nous free-tier availability as of this writing:
 
 | Model | Status |
 |---|---|
-| `poolside/laguna-s-2.1:free` | works |
-| `meituan/longcat-2.5-preview:free` | works, but reasoning-heavy — can burn its whole token budget on `reasoning_content` and return empty content |
+| `meituan/longcat-2.5-preview:free` | works — best findings, but slow and reasoning-heavy |
+| `poolside/laguna-s-2.1:free` | works, but times out on large diffs |
 | `meituan/longcat-2.0:free` | no longer free (404) |
 | `stepfun/step-3.7-flash:free` | 400, provider rejected the request |
 | `inclusionai/ling-3.0-flash-*:free` | 404 / 400 |

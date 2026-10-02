@@ -29,7 +29,7 @@ GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/{model}:ge
 
 DEFAULT_MODELS = {
     "gemini": "gemini-3.8-flash",
-    "nous": "poolside/laguna-s-2.1:free",
+    "nous": "meituan/longcat-2.5-preview:free",
 }
 
 # Tried in order when the primary Gemini model is rate-limited or overloaded.
@@ -40,12 +40,13 @@ GEMINI_FALLBACKS = [
     "gemini-2.5-flash",
 ]
 
-# Nous free-tier models vary in availability. Verified working: laguna-s-2.1,
-# longcat-2.5-preview. longcat-2.5 is a reasoning model and can burn its whole
-# token budget on reasoning_content, so it is the fallback, not the default.
+# Nous free-tier models vary in availability. Verified working: longcat-2.5-preview,
+# laguna-s-2.1. longcat-2.5 is a reasoning model: it needs a large token budget
+# (max_tokens is set high for this reason) but produces the strongest findings.
+# laguna-s-2.1 is faster when it responds at all, but times out on large diffs.
 NOUS_FALLBACKS = [
-    "poolside/laguna-s-2.1:free",
     "meituan/longcat-2.5-preview:free",
+    "poolside/laguna-s-2.1:free",
 ]
 
 # Diff budget (characters) sent to the model.
